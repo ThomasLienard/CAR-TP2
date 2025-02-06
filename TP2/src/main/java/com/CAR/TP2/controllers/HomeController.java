@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.CAR.TP2.data.Client;
 import com.CAR.TP2.services.ClientItf;
 
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/store")
@@ -27,16 +29,34 @@ public class HomeController {
     }
 
     @PostMapping("/create")
-    public RedirectView create(@RequestParam String email,@RequestParam String password,@RequestParam String nom,@RequestParam String prenom ){
+    public RedirectView create(@RequestParam String email, @RequestParam String password, @RequestParam String nom, @RequestParam String prenom) {
         service.create(email, password, nom, prenom);
         return new RedirectView("/store/home");
     }
-
-    @PostMapping("/login")
-    public ModelAndView login(@RequestParam String email, @RequestParam String password) {
-        var client = service.findByEmailAndPassword(email,password);
-        var model = Map.of("client",client);
-        return new ModelAndView("/store/client",model);
-    }
     
+    @PostMapping("/login")
+    public RedirectView login(@RequestParam String email, @RequestParam String password, HttpSession session) {
+        Client client = service.findByEmailAndPassword(email, password);
+        if (client != null) {
+            session.setAttribute("client", client); 
+            return new RedirectView("/store/client");
+        }
+        return new RedirectView("/store/home");
+    }
+
+    @GetMapping("/client")
+    public ModelAndView clientPage(HttpSession session) {
+        Client client = (Client) session.getAttribute("client");
+        if (client == null) {
+            return new ModelAndView("/store/home");
+        }
+        return new ModelAndView("/store/client", Map.of("client", client));
+    }
+
+    @GetMapping("/logout")
+    public RedirectView logout(HttpSession session) {
+    	session.removeAttribute("client");
+        session.invalidate(); 
+        return new RedirectView("/store/home");
+    }
 }
