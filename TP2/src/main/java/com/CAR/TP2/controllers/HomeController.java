@@ -13,6 +13,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.CAR.TP2.data.Client;
 import com.CAR.TP2.services.ClientItf;
+import com.CAR.TP2.services.CommandeItf;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -22,6 +23,9 @@ public class HomeController {
     
     @Autowired
     private ClientItf service;
+    
+    @Autowired
+    private CommandeItf commandeService;
 
     @GetMapping("/home")
     public String home() {
@@ -38,24 +42,33 @@ public class HomeController {
     public RedirectView login(@RequestParam String email, @RequestParam String password, HttpSession session) {
         Client client = service.findByEmailAndPassword(email, password);
         if (client != null) {
-            session.setAttribute("client", client); 
+            session.setAttribute("email", email); 
             return new RedirectView("/store/client");
         }
         return new RedirectView("/store/home");
     }
-
+    
     @GetMapping("/client")
     public ModelAndView clientPage(HttpSession session) {
-        Client client = (Client) session.getAttribute("client");
-        if (client == null) {
+        String email = (String) session.getAttribute("email");
+        if (email == null) {
             return new ModelAndView("/store/home");
         }
-        return new ModelAndView("/store/client", Map.of("client", client));
+        
+        Client client = service.findByEmail(email);
+        var commandes = commandeService.findAllByClient(client); 
+
+        var model = Map.of(
+            "client", email,
+            "commandes", commandes
+        );
+        return new ModelAndView("/store/client", model);
     }
+
 
     @GetMapping("/logout")
     public RedirectView logout(HttpSession session) {
-    	session.removeAttribute("client");
+    	session.removeAttribute("email");
         session.invalidate(); 
         return new RedirectView("/store/home");
     }

@@ -1,7 +1,10 @@
-package com.CAR.TP2.data;
+	package com.CAR.TP2.data;
+
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Client {
@@ -10,7 +13,10 @@ public class Client {
     private String email;  
     private String password;
     private String nom;
-    private String prenom;                       
+    private String prenom;    
+    
+    @OneToMany
+    private List<Commande> listeCommande;
                                     
     public Client() {}
                                 
@@ -37,7 +43,7 @@ public class Client {
         this.prenom = prenom;
     }
 
-    public String getMail() {
+    public String getEmail() {
         return email;
     }
 
@@ -52,4 +58,21 @@ public class Client {
     public String getPrenom() {
         return prenom;
     }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public List<Commande> getListeCommande() {
+        return listeCommande;
+    }
+
+    public void setListeCommande(List<Commande> listeCommande) {
+        this.listeCommande = listeCommande;
+    }
+    
+    public void addCommande(Commande commande) {
+    	this.listeCommande.add(commande);
+    }
+    
 }
