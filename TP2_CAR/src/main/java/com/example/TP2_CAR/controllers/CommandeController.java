@@ -32,25 +32,40 @@ public class CommandeController {
     @PostMapping("/createCommand")
     public RedirectView create(@RequestParam String nom, HttpSession session) {
         String email = (String) session.getAttribute("email");
+        if (email == null) {
+            return new RedirectView("/store/home");
+        }
         Client client = clientService.findByEmail(email);
         service.create(nom, client);
         return new RedirectView("/store/client");
     }
 
     @PostMapping("/addArticle")
-    public RedirectView addArticle(@RequestParam Long commandeId, @RequestParam String articleNom, @RequestParam int quantity, @RequestParam double price) {
+    public RedirectView addArticle(@RequestParam Long commandeId, @RequestParam String articleNom, @RequestParam int quantity, @RequestParam double price, HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        if (email == null) {
+            return new RedirectView("/store/home");
+        }
         service.addArticleToCommande(commandeId, articleNom, quantity, price);
         return new RedirectView("/store/client/commande/" + commandeId);
     }
 
     @PostMapping("/removeArticle")
-    public RedirectView removeArticle(@RequestParam Long commandeId, @RequestParam String articleNom) {
+    public RedirectView removeArticle(@RequestParam Long commandeId, @RequestParam String articleNom, HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        if (email == null) {
+            return new RedirectView("/store/home");
+        }
         service.removeArticleFromCommande(commandeId, articleNom);
         return new RedirectView("/store/client/commande/" + commandeId);
     }
 
     @GetMapping("/commande/{id}")
-    public ModelAndView commandePage(@PathVariable Long id) {
+    public ModelAndView commandePage(@PathVariable Long id, HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        if (email == null) {
+            return new ModelAndView("/store/home");
+        }
         Commande commande = service.findById(id).orElseThrow();
         var model = Map.of(
             "commande", commande,
