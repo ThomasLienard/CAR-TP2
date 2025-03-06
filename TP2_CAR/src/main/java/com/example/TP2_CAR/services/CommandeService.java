@@ -55,17 +55,29 @@ public class CommandeService implements CommandeItf {
             
             if (optionalArticle.isPresent()) {
                 article = optionalArticle.get();
+                article.setPrixUnitaire(prix);
             } else {
                 article = new Article(articleNom, prix);
                 articleRepo.save(article);
             }
+            
+            Optional<LigneCommande> existingLigneCommande = commande.getLigneCommande().stream()
+                .filter(lc -> lc.getArticle().getNomArticle().equals(articleNom))
+                .findFirst();
 
-            LigneCommande ligneCommande = new LigneCommande();
-            ligneCommande.setArticle(article);
-            ligneCommande.setNbArticle(quantity);
-            ligneCommande.setCommande(commande);
-            ligneCommandeRepo.save(ligneCommande); // Save the LigneCommande entity
-            commande.getLigneCommande().add(ligneCommande);
+            if (existingLigneCommande.isPresent()) {
+                LigneCommande ligneCommande = existingLigneCommande.get();
+                ligneCommande.setNbArticle(ligneCommande.getNbArticle() + quantity);
+                ligneCommandeRepo.save(ligneCommande);
+            } else {
+                LigneCommande ligneCommande = new LigneCommande();
+                ligneCommande.setArticle(article);
+                ligneCommande.setNbArticle(quantity);
+                ligneCommande.setCommande(commande);
+                ligneCommandeRepo.save(ligneCommande);
+                commande.getLigneCommande().add(ligneCommande);
+            }
+
             repo.save(commande);
         } else {
             throw new NoSuchElementException("Commande not found");
@@ -82,5 +94,14 @@ public class CommandeService implements CommandeItf {
     @Override
     public Optional<Commande> findById(Long id) {
         return repo.findById(id);
+    }
+
+    @Override
+    public double calculTotalCommande(Commande commande) {
+        double somme = 0;
+        for (LigneCommande ligneCommande : commande.getLigneCommande()) {
+            somme += ligneCommande.getNbArticle() * ligneCommande.getArticle().getPrixUnitaire();
+        }
+        return somme;
     }
 }

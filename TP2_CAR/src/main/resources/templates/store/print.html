@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styleCommandePage.css">
+    <title>Impression</title>
+</head>
+<body>
+    <h1>Commande: <span th:text="${commande.nom}"></span></h1>
+    
+    <a th:href="@{'/store/client/commande/' + ${commande.id}}">Retour</a>
+    <br>
+    <hr>
+    <h2>Liste des articles</h2>
+    <table border="1">
+        <tr><th>Nom</th><th>Quantité</th><th>Prix Unitaire</th></tr>
+        <tr th:each="ligneCommande : ${articles}">
+            <td th:text="${ligneCommande.article.nomArticle}"></td>
+            <td th:text="${ligneCommande.nbArticle}"></td>
+            <td th:text="${ligneCommande.article.prixUnitaire}"></td>
+        </tr>
+    </table>
+
+    <h2>Total de la commande</h2>
+    <p th:text="${totalCommande} + ' €'"></p>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package com.example.TP2_CAR.controllers;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import com.example.TP2_CAR.services.CommandeItf;
 
 import jakarta.servlet.http.HttpSession;
 
+
 @Controller
 @RequestMapping("/store/client")
 public class CommandeController {
@@ -32,7 +34,7 @@ public class CommandeController {
     @PostMapping("/createCommand")
     public RedirectView create(@RequestParam String nom, HttpSession session) {
         String email = (String) session.getAttribute("email");
-        if (email == null) {
+        if (email == null || clientService.findByEmail(email) == null) {
             return new RedirectView("/store/home");
         }
         Client client = clientService.findByEmail(email);
@@ -43,7 +45,7 @@ public class CommandeController {
     @PostMapping("/addArticle")
     public RedirectView addArticle(@RequestParam Long commandeId, @RequestParam String articleNom, @RequestParam int quantity, @RequestParam double price, HttpSession session) {
         String email = (String) session.getAttribute("email");
-        if (email == null) {
+        if (email == null || clientService.findByEmail(email) == null) {
             return new RedirectView("/store/home");
         }
         service.addArticleToCommande(commandeId, articleNom, quantity, price);
@@ -53,7 +55,7 @@ public class CommandeController {
     @PostMapping("/removeArticle")
     public RedirectView removeArticle(@RequestParam Long commandeId, @RequestParam String articleNom, HttpSession session) {
         String email = (String) session.getAttribute("email");
-        if (email == null) {
+        if (email == null || clientService.findByEmail(email) == null) {
             return new RedirectView("/store/home");
         }
         service.removeArticleFromCommande(commandeId, articleNom);
@@ -61,16 +63,42 @@ public class CommandeController {
     }
 
     @GetMapping("/commande/{id}")
-    public ModelAndView commandePage(@PathVariable Long id, HttpSession session) {
+    public Object commandePage(@PathVariable Long id, HttpSession session) {
         String email = (String) session.getAttribute("email");
-        if (email == null) {
-            return new ModelAndView("/store/home");
+        if (email == null || clientService.findByEmail(email) == null) {
+            return new RedirectView("/store/home");
         }
-        Commande commande = service.findById(id).orElseThrow();
-        var model = Map.of(
+        try {
+            Commande commande = service.findById(id).orElseThrow();
+            var model = Map.of(
             "commande", commande,
             "articles", commande.getLigneCommande()
-        );
-        return new ModelAndView("/store/commande", model);
+            );
+            return new ModelAndView("/store/commande", model);
+        } catch (NoSuchElementException e) {
+            return new RedirectView("/store/client");
+        }
+        
     }
+
+    @PostMapping("/commande/print")
+    public Object printPage(HttpSession session, @RequestParam Long commandeId) {
+        String email = (String) session.getAttribute("email");
+        if (email == null || clientService.findByEmail(email) == null) {
+            return new RedirectView("/store/home");
+        }
+        try {
+            Commande commande = service.findById(commandeId).orElseThrow();
+            var model = Map.of(
+            "commande", commande,
+            "articles", commande.getLigneCommande(),
+            "totalCommande", service.calculTotalCommande(commande)
+            );
+            return new ModelAndView("/store/print", model);
+        } catch (NoSuchElementException e) {
+            return new RedirectView("/store/client");
+        }
+    }
+    
+
 }

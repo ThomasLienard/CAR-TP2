@@ -46,6 +46,19 @@ form {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+#removeArticle {
+    background: white;
+    padding: 5px;;
+    margin: 10px auto;
+    width: 200px;
+    border-radius: 8px;
+}
+
+#print {background: white;
+    padding: 0px;;
+    margin: 5px auto;
+    width: 100px;
+    border-radius: 8px;}
 
 input[name="articleNom"],input[name="quantity"],input[name="price"] {
     width: calc(100% - 20px);
@@ -69,4 +82,13 @@ input[type="submit"] {
 
 input[type="submit"]:hover {
     background-color: #218838;
+}
+
+p {
+    color: #333;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 20px auto;
+    width: 60%;
+    text-align: right;
 }

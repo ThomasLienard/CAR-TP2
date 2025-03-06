@@ -51,7 +51,9 @@ public class HomeController {
     @GetMapping("/client")
     public ModelAndView clientPage(HttpSession session) {
         String email = (String) session.getAttribute("email");
-        if (email == null) {
+        System.out.println(email);
+        /** check if email is empty or not existing in database */
+        if (email == null || service.findByEmail(email) == null) {
             return new ModelAndView("/store/home");
         }
         

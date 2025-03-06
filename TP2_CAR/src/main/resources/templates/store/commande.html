@@ -20,7 +20,7 @@
             <td th:text="${ligneCommande.nbArticle}"></td>
             <td th:text="${ligneCommande.article.prixUnitaire}"></td>
             <td>
-                <form th:action="@{/store/client/removeArticle}" method="post">
+                <form id="removeArticle" th:action="@{/store/client/removeArticle}" method="post">
                     <input type="hidden" name="commandeId" th:value="${commande.id}">
                     <input type="hidden" name="articleNom" th:value="${ligneCommande.article.nomArticle}">
                     <input type="submit" value="Supprimer">
@@ -28,9 +28,13 @@
             </td>
         </tr>
     </table>
+    <form id ="print" th:action="@{/store/client/commande/print}" method="post">
+        <input type="hidden" name="commandeId" th:value="${commande.id}">
+        <input type="submit" value="Imprimer">
+    </form>
     <hr>
     <h2>Ajouter un article</h2>
-    <form th:action="@{/store/client/addArticle}" method="post">
+    <form id="addArticle" th:action="@{/store/client/addArticle}" method="post">
         <input type="hidden" name="commandeId" th:value="${commande.id}">
         Nom de l'article : <input name="articleNom">
         Quantité : <input name="quantity" type="number">
