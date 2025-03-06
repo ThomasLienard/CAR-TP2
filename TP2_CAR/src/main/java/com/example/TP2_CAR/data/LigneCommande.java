@@ -15,7 +15,7 @@ public class LigneCommande {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "article_nom", referencedColumnName = "nomArticle")
+    @JoinColumn(name = "article_id", referencedColumnName = "id")
     private Article article;
 
     private int NbArticle;

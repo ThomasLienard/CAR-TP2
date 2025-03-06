@@ -84,11 +84,15 @@ input[type="submit"]:hover {
     background-color: #218838;
 }
 
+input[value="Supprimer"] {
+    background-color: #d81832;
+}
+
 p {
     color: #333;
     font-size: 1.5em;
     font-weight: bold;
     margin: 20px auto;
     width: 60%;
-    text-align: right;
+    text-align: center;
 }

@@ -47,22 +47,20 @@ public class CommandeService implements CommandeItf {
     @Override
     public void addArticleToCommande(Long commandeId, String articleNom, int quantity, double prix) {
         Optional<Commande> optionalCommande = repo.findById(commandeId);
-        Optional<Article> optionalArticle = articleRepo.findById(articleNom);
 
         if (optionalCommande.isPresent()) {
             Commande commande = optionalCommande.get();
+            Optional<Article> optionalArticle = articleRepo.findByNomArticleAndPrixUnitaire(articleNom, prix);
             Article article;
-            
             if (optionalArticle.isPresent()) {
                 article = optionalArticle.get();
-                article.setPrixUnitaire(prix);
             } else {
                 article = new Article(articleNom, prix);
                 articleRepo.save(article);
             }
-            
+
             Optional<LigneCommande> existingLigneCommande = commande.getLigneCommande().stream()
-                .filter(lc -> lc.getArticle().getNomArticle().equals(articleNom))
+                .filter(lc -> lc.getArticle().getNomArticle().equals(articleNom) && lc.getArticle().getPrixUnitaire() == prix)
                 .findFirst();
 
             if (existingLigneCommande.isPresent()) {
@@ -85,9 +83,9 @@ public class CommandeService implements CommandeItf {
     }
 
     @Override
-    public void removeArticleFromCommande(Long commandeId, String articleNom) {
+    public void removeArticleFromCommande(Long commandeId, Long articleId) {
         Commande commande = repo.findById(commandeId).orElseThrow();
-        commande.getLigneCommande().removeIf(lc -> lc.getArticle().getNomArticle().equals(articleNom));
+        commande.getLigneCommande().removeIf(lc -> lc.getArticle().getId().equals(articleId));
         repo.save(commande);
     }
 

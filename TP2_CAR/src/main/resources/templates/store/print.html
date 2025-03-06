@@ -18,7 +18,7 @@
         <tr th:each="ligneCommande : ${articles}">
             <td th:text="${ligneCommande.article.nomArticle}"></td>
             <td th:text="${ligneCommande.nbArticle}"></td>
-            <td th:text="${ligneCommande.article.prixUnitaire}"></td>
+            <td th:text="${ligneCommande.article.prixUnitaire} + ' €'"></td>
         </tr>
     </table>
 

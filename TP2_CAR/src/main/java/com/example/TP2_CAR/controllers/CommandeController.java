@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Window;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,17 +49,18 @@ public class CommandeController {
         if (email == null || clientService.findByEmail(email) == null) {
             return new RedirectView("/store/home");
         }
+       
         service.addArticleToCommande(commandeId, articleNom, quantity, price);
         return new RedirectView("/store/client/commande/" + commandeId);
     }
 
     @PostMapping("/removeArticle")
-    public RedirectView removeArticle(@RequestParam Long commandeId, @RequestParam String articleNom, HttpSession session) {
+    public RedirectView removeArticle(@RequestParam Long commandeId, @RequestParam Long articleId, HttpSession session) {
         String email = (String) session.getAttribute("email");
         if (email == null || clientService.findByEmail(email) == null) {
             return new RedirectView("/store/home");
         }
-        service.removeArticleFromCommande(commandeId, articleNom);
+        service.removeArticleFromCommande(commandeId, articleId);
         return new RedirectView("/store/client/commande/" + commandeId);
     }
 
