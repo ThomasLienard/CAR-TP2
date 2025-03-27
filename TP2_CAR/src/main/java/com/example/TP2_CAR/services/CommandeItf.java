@@ -20,4 +20,6 @@ public interface CommandeItf {
     void removeArticleFromCommande(Long commandeId, Long articleId);
 
     public double calculTotalCommande(Commande commande);
+
+    void valider(Long commandeId);
 }

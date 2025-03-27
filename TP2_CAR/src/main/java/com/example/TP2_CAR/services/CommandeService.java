@@ -102,4 +102,11 @@ public class CommandeService implements CommandeItf {
         }
         return somme;
     }
+
+    @Override
+    public void valider(Long commandeId) {
+        Commande commande = repo.findById(commandeId).orElseThrow();
+        commande.setEtat("Validée");
+        repo.save(commande);
+    }
 }

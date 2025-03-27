@@ -41,5 +41,13 @@
         Prix : <input name="price" type="number" step="0.01" min="0">
         <input type="submit" value="Ajouter">
     </form>
+
+    <hr>
+    <h2>Valider la commande</h2>
+    <form th:action="@{/store/client/valider}" method="post">
+        <input type="hidden" name="commandeId" th:value="${commande.id}">
+        <input type="submit" value="Valider">
+    </form>
+
 </body>
 </html>

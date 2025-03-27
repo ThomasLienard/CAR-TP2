@@ -14,10 +14,11 @@
     <hr>
     <h2>Liste des commandes</h2>
     <table border="1">
-        <tr><th>Id</th><th>Nom</th><th></th></tr>
+        <tr><th>Id</th><th>Nom</th><th>Etat</th><th></th></tr>
         <tr th:each="commande : ${commandes}">
         	<td th:text="${commande.id}"/>
         	<td th:text="${commande.nom}"/>
+            <td th:text="${commande.etat}"/>
         	<td> <a th:href="@{'/store/client/commande/' + ${commande.id}}">edit</a> </td> 
         </tr>
     </table>
